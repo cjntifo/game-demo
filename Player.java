@@ -8,22 +8,29 @@ import java.awt.event.KeyEvent;
 public class Player extends GameObject
 {
    private float width = 32, height = 64;
-   private float gravity = 0.5f;
+   private float gravity = 0.35f;
    private boolean falling = true;
    private boolean jumping = false;
    
+   private final float MAX_SPEED = 10;   
    private Handler handler;
    
-   private final float MAX_SPEED = 10;
+   Texture texture = Game.getInstance();
+   
+   private Animation playerWalk;
    
    public Player(float x, float y, Handler handler, ObjectId id)
    {
       super(x, y, id);
       this.handler = handler;
+      
+      playerWalk = new Animation(5, texture.player[1], texture.player[2], 
+         texture.player[3], texture.player[4], texture.player[5], texture.player[6]);
    }
    
    public void tick(LinkedList<GameObject> object)
    {
+      //Move the player, according to the current velocity.
       x += velX;
       y += velY;
       
@@ -35,7 +42,10 @@ public class Player extends GameObject
             velY = MAX_SPEED;
       }
       
+      //Check for any collisions...
       Collision(object);
+      
+      playerWalk.runAnimation();
    }
    
    private void Collision(LinkedList<GameObject> object)
@@ -44,18 +54,41 @@ public class Player extends GameObject
       {
          GameObject tempObject = handler.object.get(i);
          
+         //Checks collision against every block in the mesh...
          if(tempObject.getId() == ObjectId.Block)
          {
+            //Collision Bounds
+            if(getBoundsTop().intersects(tempObject.getBounds()))
+            {
+               //If player has a top collision, stop upward velocity.
+               y = tempObject.getY() + 32;
+               velY = 0;
+            }
+            
             if(getBoundsBase().intersects(tempObject.getBounds()))
             {
+               //If player has hit the ground, set falling/ jumping to false and stop velocity.
                falling = false;
                jumping = false;
-               y = tempObject.getY() - 64;
                velY = 0;
+               
+               //Clip the player to ground in case Collision() called after ground is passed.
+               y = tempObject.getY() - 64;
             }
             else
             {
+               //If no top/bottom collision, set falling to true so gravity can act.
                falling = true;
+            }
+               
+            if(getBoundsLeft().intersects(tempObject.getBounds()))
+            {
+               x = tempObject.getX() + 32;
+            }
+            
+            if(getBoundsRight().intersects(tempObject.getBounds()))
+            {
+               x = tempObject.getX() - 32;
             }
          }
       }  
@@ -63,12 +96,17 @@ public class Player extends GameObject
    
    public void render(Graphics g)
    {
-      g.setColor(Color.blue);
-      g.fillRect((int)x, (int)y, (int)width, (int)height);
+      if(velX != 0)
+         playerWalk.drawAnimation(g, (int)x, (int)y, (int)width, (int)height);
+      else
+         g.drawImage(texture.player[0], (int)x, (int)y, (int)width, (int)height, null);
       
+      //g.setColor(Color.blue);
+      //g.fillRect((int)x, (int)y, (int)width, (int)height);
+      
+      //Render players collision bounds
       g.setColor(Color.RED);
       Graphics2D g2d = (Graphics2D) g;
-      
       
       g2d.draw(getBoundsBase());
       g2d.draw(getBoundsTop());
@@ -78,7 +116,7 @@ public class Player extends GameObject
    
    public Rectangle getBounds()
    {
-      return new Rectangle((int)x,(int)y, (int)width, (int)height);
+      return new Rectangle((int)x,(int)y, (int)width/2, (int)height/2);
    }
    
    public Rectangle getBoundsBase()

@@ -8,6 +8,7 @@ public abstract class GameObject
    protected float x, y;
    protected ObjectId id;  
    protected float velX, velY;
+   protected boolean jumping, falling;
    
    GameObject(float x, float y, ObjectId id)
    {
@@ -33,5 +34,8 @@ public abstract class GameObject
    public ObjectId getId() {return id;}
    //public abstract void keyPressed(KeyEvent e);
    //public abstract void keyReleased(KeyEvent e);
+   
+   public abstract boolean isJumping();
+   public abstract void setJumping(boolean jumpings);
 }
             
