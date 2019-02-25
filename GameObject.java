@@ -6,9 +6,11 @@ import java.awt.event.KeyEvent;
 public abstract class GameObject
 {
    protected float x, y;
+   protected float width, height;
    protected ObjectId id;  
    protected float velX, velY;
    protected boolean jumping, falling;
+   protected int facing;
    
    GameObject(float x, float y, ObjectId id)
    {
@@ -26,6 +28,9 @@ public abstract class GameObject
    public void setX(float x) {this.x = x;}
    public void setY(float y) {this.y = y;}
    
+   public float getHeight() {return height;}
+   public float getWidth()  {return width;}
+   
    public float getVelX() {return velX;}
    public float getVelY() {return velY;}
    public void setVelX(float velX) {this.velX = velX;}
@@ -36,6 +41,12 @@ public abstract class GameObject
    //public abstract void keyReleased(KeyEvent e);
    
    public abstract boolean isJumping();
-   public abstract void setJumping(boolean jumpings);
+   public abstract void setJumping(boolean jumping);
+   
+   public abstract boolean isFalling();
+   public abstract void setFalling(boolean falling);
+   
+   public abstract int getFacing();
+   public abstract void setFacing(int facing);
 }
             

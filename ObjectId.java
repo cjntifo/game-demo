@@ -2,7 +2,10 @@ public enum ObjectId
 {
    //Different types of objects in the game...
    Player(),
-   Block();
+   Block(),
+   Bullet(),
+   Coin(),
+   Flag();
 }
 
 /*

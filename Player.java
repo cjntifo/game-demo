@@ -7,25 +7,32 @@ import java.awt.event.KeyEvent;
 
 public class Player extends GameObject
 {
+   private Camera camera;
+   
    private float width = 32, height = 64;
    private float gravity = 0.35f;
    private boolean falling = true;
    private boolean jumping = false;
+   private int facing = 1; // 1 - right // -1 = left
    
    private final float MAX_SPEED = 10;   
    private Handler handler;
    
    Texture texture = Game.getInstance();
    
-   private Animation playerWalk;
+   private Animation playerWalk; //playerWalkRight, playerWalkLeft;
    
-   public Player(float x, float y, Handler handler, ObjectId id)
+   public Player(float x, float y, Handler handler, Camera camera, ObjectId id)
    {
       super(x, y, id);
       this.handler = handler;
+      this.camera = camera;
       
       playerWalk = new Animation(5, texture.player[1], texture.player[2], 
          texture.player[3], texture.player[4], texture.player[5], texture.player[6]);
+         
+      //playerWalkLeft = new Animation(5, texture.player[8], texture.player[9], 
+         //texture.player[10], texture.player[11], texture.player[12], texture.player[13]);
    }
    
    public void tick(LinkedList<GameObject> object)
@@ -34,18 +41,29 @@ public class Player extends GameObject
       x += velX;
       y += velY;
       
+      if(velX < 0)   facing = -1;
+      else if (velX > 0)   facing = 1;
+      
       if(falling || jumping)
       {
          velY += gravity;
          
          if(velY > MAX_SPEED)
             velY = MAX_SPEED;
+         // if(velY == 0)
+//          {
+//             falling = false;
+//             jumping = false;
+//          }
+         
+         //System.out.println("VelY " + velY + " Falling: " + falling + " Jumping: " + jumping);
       }
       
       //Check for any collisions...
       Collision(object);
       
       playerWalk.runAnimation();
+      //playerWalkLeft.runAnimation();
    }
    
    private void Collision(LinkedList<GameObject> object)
@@ -68,7 +86,7 @@ public class Player extends GameObject
             if(getBoundsBase().intersects(tempObject.getBounds()))
             {
                //If player has hit the ground, set falling/ jumping to false and stop velocity.
-               falling = false;
+               //falling = false;
                jumping = false;
                velY = 0;
                
@@ -79,6 +97,7 @@ public class Player extends GameObject
             {
                //If no top/bottom collision, set falling to true so gravity can act.
                falling = true;
+               //jumping = true;
             }
                
             if(getBoundsLeft().intersects(tempObject.getBounds()))
@@ -91,27 +110,66 @@ public class Player extends GameObject
                x = tempObject.getX() - 32;
             }
          }
+         else if(tempObject.getId() == ObjectId.Flag)
+         {
+            if(getBoundsBase().intersects(tempObject.getBounds()))
+            {
+               handler.switchLevel();
+            }            
+         }
       }  
    }
    
    public void render(Graphics g)
    {
-      if(velX != 0)
-         playerWalk.drawAnimation(g, (int)x, (int)y, (int)width, (int)height);
+      if(jumping)
+      {
+         if(facing == 1)
+         {
+            g.drawImage(texture.player_jump[2], (int)x, (int)y, (int) width, (int)height, null);
+         }
+         else if(facing == -1)
+         {
+            g.drawImage(texture.player_jump[2], (int)x + (int)width, (int)y, (int) width * -1, (int)height, null);
+         }
+      }
       else
-         g.drawImage(texture.player[0], (int)x, (int)y, (int)width, (int)height, null);
+      {
+         if(velX != 0)
+         {
+            if(facing == 1)
+               playerWalk.drawAnimation(g, (int)x, (int)y, (int)width, (int)height);
+            else if(facing == -1)
+               playerWalk.drawAnimation(g, (int)x + (int)width, (int)y, (int)width * -1, (int)height);
+         }
+         else
+         {
+            if(facing == 1)
+               g.drawImage(texture.player[0], (int)x, (int)y, (int)width, (int)height, null);
+            else if(facing == -1)
+               g.drawImage(texture.player[0], (int)x + (int)width, (int)y, (int)width * -1, (int)height, null);
+         }
+      }
       
       //g.setColor(Color.blue);
       //g.fillRect((int)x, (int)y, (int)width, (int)height);
       
       //Render players collision bounds
-      g.setColor(Color.RED);
-      Graphics2D g2d = (Graphics2D) g;
-      
-      g2d.draw(getBoundsBase());
-      g2d.draw(getBoundsTop());
-      g2d.draw(getBoundsLeft());
-      g2d.draw(getBoundsRight());
+      drawCollisionBounds(true, g);
+   }
+   
+   private void drawCollisionBounds(boolean state, Graphics g)
+   {
+      if(state)
+      {
+         g.setColor(Color.RED);
+         Graphics2D g2d = (Graphics2D) g;
+         
+         g2d.draw(getBoundsBase());
+         g2d.draw(getBoundsTop());
+         g2d.draw(getBoundsLeft());
+         g2d.draw(getBoundsRight());
+      }
    }
    
    public Rectangle getBounds()
@@ -121,7 +179,7 @@ public class Player extends GameObject
    
    public Rectangle getBoundsBase()
    {
-      return new Rectangle((int) ((int)x + (width/2)-((width/2)/2)), (int)( (int)y + (height/2) ), (int)width/2, (int)height/2);
+      return new Rectangle((int) ((int)x + (width/2)-((width/2)/2)), (int)( (int)y + (height/2)), (int)width/2, (int)height/2);
    }
    
    public Rectangle getBoundsTop()
@@ -139,11 +197,14 @@ public class Player extends GameObject
       return new Rectangle((int)x, (int)y + 5, (int)5, (int)height - 10);
    }
    
+   public int getFacing()  {return facing;}
+   public void setFacing(int facing) {this.facing = facing;}
+   
    public boolean isJumping() {return jumping;}
-   public boolean isfalling() {return falling;}
+   public boolean isFalling() {return falling;}
    
    public void setJumping(boolean jumping) {this.jumping = jumping;}
-   public void setfalling(boolean falling) {this.falling = falling;}
+   public void setFalling(boolean falling) {this.falling = falling;}
    
    /*public void keyPressed(KeyEvent e)
    {

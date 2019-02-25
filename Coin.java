@@ -3,38 +3,35 @@ import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.awt.Graphics;
 
-public class Block extends GameObject
+public class Coin extends GameObject
 {
    Texture texture = Game.getInstance();
-   private int type;
+   private Animation coinRotate;
    
-   public Block(float x, float y, int type, ObjectId id)
+   private float width = 32, height = 32;
+   
+   public Coin(float x, float y, ObjectId id)
    {
       super(x, y, id);
-      this.type = type;
+      
+      coinRotate = new Animation(5, texture.coin[0], texture.coin[1], texture.coin[2], 
+         texture.coin[3], texture.coin[4], texture.coin[5], texture.coin[6],texture.coin[7]);
    }
    
    public void tick(LinkedList<GameObject> object)
    {
-   
+      coinRotate.runAnimation();
    }
    
    public void render(Graphics g)
    {
-      if(type == 0)
-      {
-         g.drawImage(texture.block[0], (int)x, (int)y, 32, 32, null);
-      }
-      else if(type == 1)
-      {
-         g.drawImage(texture.block[1], (int)x, (int)y, 32, 32, null);
-      }
-      else
-      {
-         //Render block as a 32x32 white square...
-         g.setColor(Color.white);
-         g.drawRect((int)x, (int)y, 32, 32);
-      }
+      //g.drawImage(texture.block[0], (int)x, (int)y, 32, 32, null);
+      //Render block as a 32x32 yellow square...
+      //g.setColor(Color.yellow);
+      //g.fillRect((int)x, (int)y, 32, 32);
+      
+      //coinRotate.drawAnimation(g, (int)x, (int)y, (int)width, (int)height);
+      coinRotate.drawAnimation(g, (int)x, (int)y);
    }
    
    public Rectangle getBounds()

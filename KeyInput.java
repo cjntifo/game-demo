@@ -32,10 +32,16 @@ public class KeyInput extends KeyAdapter
             if(key == KeyEvent.VK_A) tempObject.setVelX(-5);
             
             //Jump (if not jumping already)
-            if(key == KeyEvent.VK_SPACE && !tempObject.isJumping())
+            if(key == KeyEvent.VK_W && !tempObject.isJumping())
             {
                tempObject.setJumping(true);
                tempObject.setVelY(-10);
+            }
+            
+            if(key == KeyEvent.VK_SPACE)
+            {
+               System.out.println("Y: " + tempObject.getY() + "Mod: " + tempObject.getHeight());
+               handler.addObject(new Bullet(tempObject.getX(), tempObject.getY() + (tempObject.getHeight() /2), tempObject.getFacing() * 8, ObjectId.Bullet));
             }                   
          }
       }

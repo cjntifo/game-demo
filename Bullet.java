@@ -3,44 +3,37 @@ import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.awt.Graphics;
 
-public class Block extends GameObject
+public class Bullet extends GameObject
 {
+   private float width = 32, height = 32;
+   private int facing;
    Texture texture = Game.getInstance();
-   private int type;
    
-   public Block(float x, float y, int type, ObjectId id)
+   Bullet(float x, float y, int velX, ObjectId id)
    {
       super(x, y, id);
-      this.type = type;
+      
+      this.velX = velX;
+      this.facing = (velX > 0) ? 1 : -1;
    }
    
    public void tick(LinkedList<GameObject> object)
    {
-   
+      x += velX;
    }
    
    public void render(Graphics g)
    {
-      if(type == 0)
-      {
-         g.drawImage(texture.block[0], (int)x, (int)y, 32, 32, null);
-      }
-      else if(type == 1)
-      {
-         g.drawImage(texture.block[1], (int)x, (int)y, 32, 32, null);
-      }
-      else
-      {
-         //Render block as a 32x32 white square...
-         g.setColor(Color.white);
-         g.drawRect((int)x, (int)y, 32, 32);
-      }
+      //g.setColor(Color.red);
+      //g.fillRect((int)x, (int)y, 16, 16);
+      
+      int positionCorrection = (facing == -1) ? (int)width : 0;
+      g.drawImage(texture.effect[0], (int)x + positionCorrection, (int)y, (int)width * facing, (int)height, null);
    }
    
    public Rectangle getBounds()
    {
-      //Return Rectangle for Collision dectection...
-      return new Rectangle((int)x, (int)y, 32, 32);
+      return new Rectangle((int)x, (int)y, (int)width, (int)height);
    }
    
    public void setJumping(boolean jumping){} //Blocks cannot jump...
@@ -49,5 +42,4 @@ public class Block extends GameObject
    public boolean isFalling(){return false;} //Blocks cannot jump...
    public void setFacing(int facing){}
    public int getFacing() {return facing;}
-   
 }

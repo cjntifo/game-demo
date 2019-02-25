@@ -1,11 +1,25 @@
 import java.awt.Graphics;
 import java.util.LinkedList;
+import java.awt.image.BufferedImage;
 
 public class Handler
 {
    public LinkedList<GameObject> object = new LinkedList<GameObject>();
    
    private GameObject tempObject;
+   private Camera camera;
+   
+   public BufferedImage level = null, level2 = null, clouds = null;
+   
+   public Handler(Camera camera)
+   {
+      this.camera = camera;
+      
+      BufferedImageLoader loader = new BufferedImageLoader();
+      level = loader.loadImage("res/game_level.png");
+      level2 = loader.loadImage("res/level.png");
+      clouds = loader.loadImage("res/cloud1.png");
+   }
    
    public void tick()
    {
@@ -29,6 +43,75 @@ public class Handler
       }
    }
    
+   public void loadImageLevel(BufferedImage image)
+   {
+      int w = image.getWidth();
+      int h = image.getHeight();
+      
+      //System.out.println("Width " + w + " Height " + h);
+      
+      for(int xx = 0; xx < h; xx++)
+      {
+         for(int yy = 0; yy < w; yy++)
+         {
+            //Retrieve the current pixel
+            int pixel = image.getRGB(xx, yy);
+            
+            //Extract RGB values from pixel
+            // pixel : 0xA3 0x41 0x28 0x76
+            // pixel :   A   R    G   B
+            
+            //int alpha = (pixel >> 24) & 0xff;
+            int red = (pixel >> 16) & 0xff;
+            int green = (pixel >> 8) & 0xff;
+            int blue = (pixel) & 0xff;
+            
+            if(red == 255 && green == 255 && blue == 255)
+            {
+               //Must be a white pixel
+               addObject(new Block(xx*32, yy*32, 1, ObjectId.Block)); 
+            }
+            if(red == 128 && green == 128 && blue == 128)
+            {
+               //Must be a grey pixel
+               addObject(new Block(xx*32, yy*32, 0, ObjectId.Block)); 
+            }
+            if(red == 0 && green == 0 && blue == 255)
+            {
+               //Must be a blue pixel
+               addObject(new Player(xx*32, yy*32, this, camera, ObjectId.Player)); 
+            }
+            if(red == 255 && green == 255 && blue == 0)
+            {
+               //Must be a yellow pixel
+               addObject(new Coin(xx*32, yy*32, ObjectId.Coin)); 
+            }
+            if(red == 255 && green == 0 && blue == 255)
+            {
+               //Must be a purple pixel
+               addObject(new Flag(xx*32, yy*32, ObjectId.Flag)); 
+            }
+         }
+      }
+   }
+   
+   public void switchLevel()
+   {
+      clearLevel();
+      camera.setX(0);
+      
+      switch(Game.LEVEL)
+      {
+         case 1:
+            loadImageLevel(level2);
+            Game.LEVEL++;
+            break;
+         default:
+            loadImageLevel(level);
+            break;
+      }
+   }
+   
    public void addObject(GameObject object)
    {
       //Add object to the game list...
@@ -41,23 +124,28 @@ public class Handler
       this.object.remove(object);
    }
    
+   public void clearLevel()
+   {
+      object.clear();
+   }
+   
    public void createLevel()
    {
-      for (int xx = 0; xx < Game.WIDTH + 32 * 16; xx += 32)  addObject(new Block(xx, Game.HEIGHT - 32, ObjectId.Block));
+      for (int xx = 0; xx < Game.WIDTH + 32 * 16; xx += 32)  addObject(new Block(xx, Game.HEIGHT - 32, 0, ObjectId.Block));
          
-      for (int yy = 0; yy < Game.HEIGHT; yy += 32) addObject(new Block(0, yy, ObjectId.Block));
+      for (int yy = 0; yy < Game.HEIGHT; yy += 32) addObject(new Block(0, yy, 0, ObjectId.Block));
 
-      //for (int yy = 0; yy < Game.HEIGHT; yy += 32) addObject(new Block(Game.WIDTH - 32, yy, ObjectId.Block));
+      //for (int yy = 0; yy < Game.HEIGHT; yy += 32) addObject(new Block(Game.WIDTH - 32, yy, 0, ObjectId.Block));
          
-      for (int xx = 0; xx < 7 * 32; xx += 32) addObject(new Block((6 * 32) + xx, Game.WIDTH - 32 * 5, ObjectId.Block));
+      for (int xx = 0; xx < 7 * 32; xx += 32) addObject(new Block((6 * 32) + xx, Game.WIDTH - 32 * 5, 0, ObjectId.Block));
       
-      for (int xx = 0; xx < 5 * 32; xx += 32) addObject(new Block((15 * 32) + xx, Game.WIDTH - 32 * 8, ObjectId.Block));
+      for (int xx = 0; xx < 5 * 32; xx += 32) addObject(new Block((15 * 32) + xx, Game.WIDTH - 32 * 8, 0, ObjectId.Block));
       
-      for (int xx = 0; xx < 14 * 32; xx += 32) addObject(new Block((22 * 32) + xx, Game.WIDTH - 32 * 12, ObjectId.Block));
+      for (int xx = 0; xx < 14 * 32; xx += 32) addObject(new Block((22 * 32) + xx, Game.WIDTH - 32 * 12, 0, ObjectId.Block));
       
       ///////////////////////
       
-      for (int xx = 0; xx < Game.WIDTH + 32 * 10; xx += 32)  addObject(new Block((45 * 32) + xx, Game.HEIGHT - 32, ObjectId.Block));
+      for (int xx = 0; xx < Game.WIDTH + 32 * 10; xx += 32)  addObject(new Block((45 * 32) + xx, Game.HEIGHT - 32, 0, ObjectId.Block));
 
    }
 }
