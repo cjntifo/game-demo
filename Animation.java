@@ -22,6 +22,8 @@ public class Animation
          images[i] = args[i];
       }
       frames = args.length;
+      
+      currentImage = images[0];
    }
    
    public void runAnimation()

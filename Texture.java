@@ -36,15 +36,6 @@ public class Texture
       cs = new SpriteSheet(coin_sheet);
       
       getTextures();
-      
-      /*coin[0] = loader.loadImage("res/coins/coin_01.png");
-      coin[1] = loader.loadImage("res/coins/coin_02.png");
-      coin[2] = loader.loadImage("res/coins/coin_03.png");
-      coin[3] = loader.loadImage("res/coins/coin_04.png");
-      coin[4] = loader.loadImage("res/coins/coin_05.png");
-      coin[5] = loader.loadImage("res/coins/coin_06.png");
-      coin[6] = loader.loadImage("res/coins/coin_07.png");
-      coin[7] = loader.loadImage("res/coins/coin_08.png");*/
    }
    
    private void getTextures()

@@ -40,8 +40,8 @@ public class KeyInput extends KeyAdapter
             
             if(key == KeyEvent.VK_SPACE)
             {
-               System.out.println("Y: " + tempObject.getY() + "Mod: " + tempObject.getHeight());
-               handler.addObject(new Bullet(tempObject.getX(), tempObject.getY() + (tempObject.getHeight() /2), tempObject.getFacing() * 8, ObjectId.Bullet));
+               System.out.println("Y: " + tempObject.getY() + " Mod: " + tempObject.getHeight());
+               handler.addObject(new Bullet(tempObject.getX(), tempObject.getY() + (tempObject.getHeight() /2), tempObject.getFacing() * 8, handler, ObjectId.Bullet));
             }                   
          }
       }

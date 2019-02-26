@@ -25,13 +25,10 @@ public class Coin extends GameObject
    
    public void render(Graphics g)
    {
-      //g.drawImage(texture.block[0], (int)x, (int)y, 32, 32, null);
-      //Render block as a 32x32 yellow square...
       //g.setColor(Color.yellow);
       //g.fillRect((int)x, (int)y, 32, 32);
       
-      //coinRotate.drawAnimation(g, (int)x, (int)y, (int)width, (int)height);
-      coinRotate.drawAnimation(g, (int)x, (int)y);
+      coinRotate.drawAnimation(g, (int)x, (int)y, (int)width, (int)height);
    }
    
    public Rectangle getBounds()

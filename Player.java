@@ -1,4 +1,4 @@
-import java.awt.Color;
+cmdimport java.awt.Color;
 import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.awt.Graphics;
@@ -18,9 +18,10 @@ public class Player extends GameObject
    private final float MAX_SPEED = 10;   
    private Handler handler;
    
-   Texture texture = Game.getInstance();
-   
+   Texture texture = Game.getInstance();   
    private Animation playerWalk; //playerWalkRight, playerWalkLeft;
+   
+   private int cash;
    
    public Player(float x, float y, Handler handler, Camera camera, ObjectId id)
    {
@@ -31,8 +32,7 @@ public class Player extends GameObject
       playerWalk = new Animation(5, texture.player[1], texture.player[2], 
          texture.player[3], texture.player[4], texture.player[5], texture.player[6]);
          
-      //playerWalkLeft = new Animation(5, texture.player[8], texture.player[9], 
-         //texture.player[10], texture.player[11], texture.player[12], texture.player[13]);
+      cash = 100;
    }
    
    public void tick(LinkedList<GameObject> object)
@@ -50,13 +50,6 @@ public class Player extends GameObject
          
          if(velY > MAX_SPEED)
             velY = MAX_SPEED;
-         // if(velY == 0)
-//          {
-//             falling = false;
-//             jumping = false;
-//          }
-         
-         //System.out.println("VelY " + velY + " Falling: " + falling + " Jumping: " + jumping);
       }
       
       //Check for any collisions...
@@ -117,6 +110,14 @@ public class Player extends GameObject
                handler.switchLevel();
             }            
          }
+         else if(tempObject.getId() == ObjectId.Coin)
+         {
+            if(getBoundsLeft().intersects(tempObject.getBounds()) || getBoundsRight().intersects(tempObject.getBounds()))
+            {
+               handler.removeObject(tempObject);
+               changeBalance(true, 100);
+            }
+         }
       }  
    }
    
@@ -169,6 +170,28 @@ public class Player extends GameObject
          g2d.draw(getBoundsTop());
          g2d.draw(getBoundsLeft());
          g2d.draw(getBoundsRight());
+      }
+   }
+   
+   public int getBalance()
+   {
+      return cash;
+   }
+   
+   public void setBalance(int balance)
+   {
+      cash = balance;
+   }
+   
+   public void changeBalance(boolean increase, int amount)
+   {
+      if(increase)
+      {
+         cash += amount;
+      }
+      else
+      {
+         cash -= amount;
       }
    }
    
