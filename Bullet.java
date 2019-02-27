@@ -39,8 +39,17 @@ public class Bullet extends GameObject
             //Collision Bounds
             if(getBounds().intersects(tempObject.getBounds()))
             {
-               //handler.removeObject(tempObject);
+               handler.removeObject(tempObject);
                handler.removeObject(this);
+               //System.out.println("Number of objects: " + handler.object.size());
+            }
+         }
+         else if(tempObject.getId() == ObjectId.BoundingBlock)
+         {
+            if(getBounds().intersects(tempObject.getBounds()))
+            {
+               handler.removeObject(this);
+               //System.out.println("Number of objects: " + handler.object.size());
             }
          }
       }

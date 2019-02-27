@@ -17,7 +17,7 @@ public class Game extends Canvas implements Runnable
    private boolean running = false;
    private Thread thread;
    
-   public static int LEVEL = 1;
+   public static int LEVEL;
    public static int WIDTH, HEIGHT;
    
    public BufferedImage level = null, level2 = null, clouds = null;
@@ -29,6 +29,7 @@ public class Game extends Canvas implements Runnable
    
    private void init()
    {
+      LEVEL = 1;
       WIDTH = getWidth();
       HEIGHT = getHeight();
       
@@ -154,7 +155,7 @@ public class Game extends Canvas implements Runnable
       
       /////////////////////////////////////
       
-      g2d.translate(camera.getX(), camera.getY());
+      g2d.translate(camera.getX(), camera.getY() + 100);
      
       for(int xx = 0; xx < clouds.getWidth() * 3; xx += clouds.getWidth())
          g.drawImage(clouds, xx, -150, this);
@@ -162,7 +163,7 @@ public class Game extends Canvas implements Runnable
       //Have the handler class render every object in the program.
       handler.render(g);
       
-      g2d.translate(-camera.getX(), -camera.getY());
+      g2d.translate(-camera.getX(), -(camera.getY() + 100));
       
       /////////////////////////////////
       

@@ -1,4 +1,4 @@
-cmdimport java.awt.Color;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.awt.Graphics;
@@ -66,7 +66,7 @@ public class Player extends GameObject
          GameObject tempObject = handler.object.get(i);
          
          //Checks collision against every block in the mesh...
-         if(tempObject.getId() == ObjectId.Block)
+         if(tempObject.getId() == ObjectId.Block || tempObject.getId() == ObjectId.BoundingBlock)
          {
             //Collision Bounds
             if(getBoundsTop().intersects(tempObject.getBounds()))
@@ -156,7 +156,7 @@ public class Player extends GameObject
       //g.fillRect((int)x, (int)y, (int)width, (int)height);
       
       //Render players collision bounds
-      drawCollisionBounds(true, g);
+      drawCollisionBounds(false, g);
    }
    
    private void drawCollisionBounds(boolean state, Graphics g)

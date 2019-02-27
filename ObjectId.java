@@ -5,7 +5,8 @@ public enum ObjectId
    Block(),
    Bullet(),
    Coin(),
-   Flag();
+   Flag(),
+   BoundingBlock();
 }
 
 /*

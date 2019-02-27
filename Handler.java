@@ -11,6 +11,8 @@ public class Handler
    
    public BufferedImage level = null, level2 = null, clouds = null;
    
+   private int x_max = 0, y_max = 0;
+   
    public Handler(Camera camera)
    {
       this.camera = camera;
@@ -46,8 +48,7 @@ public class Handler
    public void loadImageLevel(BufferedImage image)
    {
       int w = image.getWidth();
-      int h = image.getHeight();
-      
+      int h = image.getHeight(); 
       //System.out.println("Width " + w + " Height " + h);
       
       for(int xx = 0; xx < h; xx++)
@@ -71,27 +72,68 @@ public class Handler
                //Must be a white pixel
                addObject(new Block(xx*32, yy*32, 1, ObjectId.Block)); 
             }
-            if(red == 128 && green == 128 && blue == 128)
+            else if(red == 128 && green == 128 && blue == 128)
             {
                //Must be a grey pixel
                addObject(new Block(xx*32, yy*32, 0, ObjectId.Block)); 
             }
-            if(red == 0 && green == 0 && blue == 255)
+            else if(red == 0 && green == 0 && blue == 255)
             {
                //Must be a blue pixel
                addObject(new Player(xx*32, yy*32, this, camera, ObjectId.Player)); 
             }
-            if(red == 255 && green == 255 && blue == 0)
+            else if(red == 255 && green == 255 && blue == 0)
             {
                //Must be a yellow pixel
                addObject(new Coin(xx*32, yy*32, ObjectId.Coin)); 
             }
-            if(red == 255 && green == 0 && blue == 255)
+            else if(red == 255 && green == 0 && blue == 255)
             {
                //Must be a purple pixel
                addObject(new Flag(xx*32, yy*32, ObjectId.Flag)); 
             }
-         }
+            
+            if(!(red == 0 && green == 0 && blue == 0))
+            {
+               if(y_max < yy)
+                  y_max = yy;
+                  
+               if(x_max < xx)
+                  x_max = xx;
+            }
+         }      
+      }
+      
+      drawGameBounds();
+   }
+   
+   private void drawGameBounds()
+   {
+      System.out.println("XMAX: " + x_max + " Y MAX: " + y_max);
+      int offset = 1;
+      
+      //Create top layer of BoundingBlocks
+      for(int xx = 0; xx <= (x_max + offset); xx++)
+      {
+         addObject(new BoundingBlock((xx - offset)*32, (-offset * 32), ObjectId.BoundingBlock));
+      }
+      
+      //Create left layer of BoundingBlocks
+      for(int yy = 0; yy <= (y_max + offset); yy++)
+      {
+         addObject(new BoundingBlock((-offset * 32), (yy - (offset - 1))*32, ObjectId.BoundingBlock));
+      }
+      
+      //Create bottom layer of BoundingBlocks
+      for(int xx = 0; xx <= (x_max + offset); xx++)
+      {
+         addObject(new BoundingBlock((xx + (offset - 1))*32, (y_max + offset)*32, ObjectId.BoundingBlock));
+      }
+      
+      //Create right layer of BoundingBlocks
+      for(int yy = 0; yy <= (y_max + offset); yy++)
+      {
+         addObject(new BoundingBlock((x_max + offset)*32, (yy - offset)*32, ObjectId.BoundingBlock));
       }
    }
    
